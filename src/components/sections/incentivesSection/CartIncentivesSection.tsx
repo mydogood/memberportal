@@ -184,7 +184,7 @@ const CartSection: FC = () => {
                     className={styles.cartListItemActionBtn}
                     onClick={() => removeCartItem(item.cartItemId)}
                   >
-                    <span className={styles.cartItemActionBtn}>-</span>
+                    <span className={styles.cartItemActionBtn}>Remove</span>
                     {/* <span>{getCartCount(item)}</span>
                     <span className={styles.cartItemActionBtn}>+</span> */}
                   </Button>
