@@ -225,9 +225,7 @@ const CartSection: FC = () => {
           {contact?.Points_Balance__c - getTotalPoints() < 0 && (
             <p
               style={{ color: "red", fontWeight: "bold", textAlign: "center" }}
-            >
-              "" You can't checkout because points remaining is negative ""
-            </p>
+            >You don't have enough points to checkout!</p>
           )}
         </div>
       </div>
