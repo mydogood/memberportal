@@ -6,7 +6,7 @@ import { useMediaQuery } from "react-responsive";
 
 interface IncentiveCustomizationDrawerProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (inputValue: string) => void;
   onSubmit: (inputValue: string) => void;
 }
 
@@ -26,7 +26,7 @@ const IncentiveCustomizationDrawer: FC<IncentiveCustomizationDrawerProps> = ({
 
   const handleSubmit = () => {
     onSubmit(inputValue);
-    onClose();
+    onClose(inputValue);
     setInputValue("");
   };
 
