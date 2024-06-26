@@ -18,6 +18,7 @@ import {
 } from "../../../salesforceAuth";
 import { getMemberInfoFromContact } from "../../../getSalesForceData";
 import RequestTextModal from "./ui/RequestTextModal";
+import NoDQModal from "./ui/NoDQModal";
 
 interface partnerQuestion {
   question: string;
@@ -74,6 +75,7 @@ const PartnerDrawer: FC<PartnerDrawerProps> = ({
     null
   );
   const [isDQpartner, setIsDQpartner] = useState<partner | null>(null);
+  const [noDQModalState, setNoDQModalState] = useState(false);
 
   const {
     addAcceptedPartner,
@@ -88,6 +90,7 @@ const PartnerDrawer: FC<PartnerDrawerProps> = ({
   const [isAccepted, setIsAccepted] = useState(false);
   const [isDeclined, setIsDeclined] = useState(false);
   const [interestText, setInterestText] = useState("");
+  const [interestTextAvailability, setInterestTextAvailability] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
   const { clientId } = useParams<{ clientId: string }>();
 
@@ -141,15 +144,8 @@ const PartnerDrawer: FC<PartnerDrawerProps> = ({
           }));
           setIsAcceptModalOpen(true);
         } else {
-          console.error("Invalid data format:", DQPartnerData);
-          if (partnerDetails) {
-            if (!isAccepted) {
-              updatePartnerInSalesForce(partnerDetails, "Accepted");
-              onClose();
-            }
-            updatePartnerInSalesForce(partnerDetails, "Accepted");
-            onClose();
-          }
+          console.log("no DQ Modal");
+          showNoDQModal();
         }
       }
     } catch (error) {
@@ -195,17 +191,22 @@ const PartnerDrawer: FC<PartnerDrawerProps> = ({
         const partnerWithInterest = {
           ...partnerDetails,
           DQ_Response__c: selectedCheckbox,
+          Available_Dates_Times_c: interestTextAvailability,
         };
+        console.log({ partnerWithInterest });
         updatePartnerInSalesForce(partnerWithInterest, "Accepted");
         onClose();
+        setInterestTextAvailability("");
         setIsAcceptModalOpen(false);
       } else if (selectedCheckbox === "No") {
         const partnerWithInterest = {
           ...partnerDetails,
           DQ_Response__c: selectedCheckbox,
         };
+        console.log({ partnerWithInterest });
         updatePartnerInSalesForce(partnerWithInterest, "Client-Declined");
         onClose();
+        setInterestTextAvailability("");
         setIsAcceptModalOpen(false);
       }
     }
@@ -218,6 +219,20 @@ const PartnerDrawer: FC<PartnerDrawerProps> = ({
         Interest_in_Partner__c: interestText,
       };
       updatePartnerInSalesForce(partnerWithInterest, "Requested");
+      onClose();
+      setInterestTextAvailability("");
+      setIsAcceptModalOpen(false);
+    }
+  };
+
+  const handleNoDQClick = () => {
+    if (partnerDetails) {
+      const partnerWithInterest = {
+        ...partnerDetails,
+        Available_Dates_Times_c: interestTextAvailability,
+      };
+      console.log({ partnerWithInterest });
+      updatePartnerInSalesForce(partnerWithInterest, "Accepted");
       onClose();
       setIsAcceptModalOpen(false);
     }
@@ -258,6 +273,14 @@ const PartnerDrawer: FC<PartnerDrawerProps> = ({
 
   const showAcceptModal = () => {
     setIsAcceptModalOpen(true);
+  };
+
+  const showNoDQModal = () => {
+    setNoDQModalState(true);
+  };
+
+  const OnDQModalCancel = () => {
+    setNoDQModalState(false);
   };
 
   const onAccept = () => {
@@ -335,6 +358,7 @@ const PartnerDrawer: FC<PartnerDrawerProps> = ({
           Stage_M__c: "Member Accepted",
           // Sweepstakes_Type__c: partner
           DQ_Response__c: partner.DQ_Response__c,
+          Available_Dates_Times_c: interestTextAvailability,
         };
         endpoint = `sobjects/Meeting__c/${partner.key}`;
         break;
@@ -409,13 +433,21 @@ const PartnerDrawer: FC<PartnerDrawerProps> = ({
     >
       {partnerDetails && (
         <section className={styles.drawerContainer}>
+          <NoDQModal
+            noDQModalState={noDQModalState}
+            showNoDQModal={showNoDQModal}
+            OnDQModalCancel={OnDQModalCancel}
+            interestTextAvailability={interestTextAvailability}
+            setInterestTextAvailability={setInterestTextAvailability}
+            onRequest={handleNoDQClick}
+          />
           <AcceptRequestModal
             isAcceptModalOpen={isAcceptModalOpen}
             onAcceptShowModal={showAcceptModal}
             onAccept={handleRequestClick}
             OnAcceptCancel={handleCancelAccept}
-            interestText={interestText}
-            setInterestText={setInterestText}
+            interestTextAvailability={interestTextAvailability}
+            setInterestTextAvailability={setInterestTextAvailability}
             onCheckboxChange={handleCheckboxSelect}
             selectedCheckbox={selectedCheckbox}
             acceptMeetings={acceptMeetings}

@@ -13,8 +13,8 @@ interface AcceptModalProps {
   onAcceptShowModal: () => void;
   onAccept: () => void;
   OnAcceptCancel: () => void;
-  interestText: string;
-  setInterestText: (value: string) => void;
+  setInterestTextAvailability: (value: string) => void;
+  interestTextAvailability: string;
   onCheckboxChange: (value: string) => void;
   selectedCheckbox: string | null;
   acceptMeetings: partnerQuestion | null;
@@ -25,15 +25,15 @@ const AcceptRequestModal: FC<AcceptModalProps> = ({
   onAcceptShowModal,
   onAccept,
   OnAcceptCancel,
-  interestText,
-  setInterestText,
+  interestTextAvailability,
+  setInterestTextAvailability,
   onCheckboxChange,
   selectedCheckbox,
   acceptMeetings,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const isMobile = useMediaQuery({ maxWidth: 610 });
-  const isSubmitDisabled = interestText.trim() === "";
+  const isSubmitDisabled = interestTextAvailability.trim() === "";
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
@@ -57,46 +57,48 @@ const AcceptRequestModal: FC<AcceptModalProps> = ({
             <div className={styles.modalTitleContainer}>
               <h3>Request to meet</h3>
             </div>
-            <small>
-              {/* Please share why you would like to meet with this partner: */}
-              {acceptMeetings?.question}
-            </small>
-
-            <div className={styles.mobileInputContainer}>
-              {/* <small>Your thoughts</small>
-              <Input
-                bordered={false}
-                placeholder={"Enter your thoughts here"}
-                value={inputValue}
-                onChange={handleInputChange}
-              /> */}
-              <Checkbox
-                className={styles.reqCheck}
-                checked={selectedCheckbox === "Yes"}
-                onChange={() => handleCheckboxChange("Yes")}
-              >
-                Yes
-              </Checkbox>
-              <Checkbox
-                className={styles.reqCheck}
-                checked={selectedCheckbox === "No"}
-                onChange={() => handleCheckboxChange("No")}
-              >
-                No
-              </Checkbox>
+            <small>{acceptMeetings?.question}</small>
+            <div>
+              <div className={styles.checkboxContainer}>
+                <Checkbox
+                  className={styles.reqCheck}
+                  checked={selectedCheckbox === "Yes"}
+                  onChange={() => handleCheckboxChange("Yes")}
+                >
+                  Yes
+                </Checkbox>
+                <Checkbox
+                  className={styles.reqCheck}
+                  checked={selectedCheckbox === "No"}
+                  onChange={() => handleCheckboxChange("No")}
+                >
+                  No
+                </Checkbox>
+              </div>
             </div>
-
-            <div className={styles.controlRequestContainer}>
-              <button onClick={OnAcceptCancel} className={styles.cancelBtn}>
-                Cancel
-              </button>
-              <button
-                onClick={onAccept}
-                className={styles.submitBtn}
-                // disabled={isSubmitDisabled}
-              >
-                Submit
-              </button>
+            <div>
+              <small>
+                Please note: if you answer "No", this meeting will be declined.
+              </small>
+            </div>
+            <div>
+              {selectedCheckbox === "Yes" && (
+                <>
+                  <p>Provide some availability:</p>
+                  <div>
+                    <div className={styles.checkboxContainer}>
+                      <Input
+                        bordered={false}
+                        placeholder={"Provide some availability"}
+                        value={interestTextAvailability}
+                        onChange={(e) =>
+                          setInterestTextAvailability(e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </section>
         </Drawer>
@@ -118,11 +120,7 @@ const AcceptRequestModal: FC<AcceptModalProps> = ({
                 this acceptance:
               </h3>
               <div className={styles.modalButtonsContainer}>
-                <button
-                  onClick={onAccept}
-                  className={styles.declineSubBtn}
-                  // disabled={isSubmitDisabled}
-                >
+                <button onClick={onAccept} className={styles.declineSubBtn}>
                   Submit
                 </button>
                 <button onClick={OnAcceptCancel} className={styles.cancelBtn}>
@@ -130,18 +128,9 @@ const AcceptRequestModal: FC<AcceptModalProps> = ({
                 </button>
               </div>
             </div>
-            <small>
-              {/* Please share why you would like to meet with this partner: */}
-              {acceptMeetings?.question}
-            </small>
+            <small>{acceptMeetings?.question}</small>
             <div>
               <div className={styles.checkboxContainer}>
-                {/* <Input
-                  bordered={false}
-                  placeholder={"Enter your thoughts here"}
-                  value={interestText}
-                  onChange={(e) => setInterestText(e.target.value)}
-                /> */}
                 <Checkbox
                   className={styles.reqCheck}
                   checked={selectedCheckbox === "Yes"}
@@ -159,7 +148,29 @@ const AcceptRequestModal: FC<AcceptModalProps> = ({
               </div>
             </div>
             <div>
-           <small>Please note: if you answer "No", this meeting will be declined.</small></div>
+              <small>
+                Please note: if you answer "No", this meeting will be declined.
+              </small>
+            </div>
+            <div>
+              {selectedCheckbox === "Yes" && (
+                <>
+                  <p>Provide some availability:</p>
+                  <div>
+                    <div className={styles.checkboxContainer}>
+                      <Input
+                        bordered={false}
+                        placeholder={"Provide some availability"}
+                        value={interestTextAvailability}
+                        onChange={(e) =>
+                          setInterestTextAvailability(e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </section>
         </Modal>
       )}
