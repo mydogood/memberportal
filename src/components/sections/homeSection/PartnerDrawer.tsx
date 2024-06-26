@@ -191,7 +191,7 @@ const PartnerDrawer: FC<PartnerDrawerProps> = ({
         const partnerWithInterest = {
           ...partnerDetails,
           DQ_Response__c: selectedCheckbox,
-          Available_Dates_Times_c: interestTextAvailability,
+          Available_Dates_Times__c: interestTextAvailability,
         };
         console.log({ partnerWithInterest });
         updatePartnerInSalesForce(partnerWithInterest, "Accepted");
@@ -229,11 +229,11 @@ const PartnerDrawer: FC<PartnerDrawerProps> = ({
     if (partnerDetails) {
       const partnerWithInterest = {
         ...partnerDetails,
-        Available_Dates_Times_c: interestTextAvailability,
+        Available_Dates_Times__c: interestTextAvailability,
       };
-      console.log({ partnerWithInterest });
       updatePartnerInSalesForce(partnerWithInterest, "Accepted");
       onClose();
+      setInterestTextAvailability("");
       setIsAcceptModalOpen(false);
     }
   };
@@ -358,7 +358,7 @@ const PartnerDrawer: FC<PartnerDrawerProps> = ({
           Stage_M__c: "Member Accepted",
           // Sweepstakes_Type__c: partner
           DQ_Response__c: partner.DQ_Response__c,
-          Available_Dates_Times_c: interestTextAvailability,
+          Available_Dates_Times__c: interestTextAvailability,
         };
         endpoint = `sobjects/Meeting__c/${partner.key}`;
         break;
