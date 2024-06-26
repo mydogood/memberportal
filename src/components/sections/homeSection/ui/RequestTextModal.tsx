@@ -89,7 +89,13 @@ const RequestTextModal: FC<RequestModalProps> = ({
               >
                 Submit
               </button>
-              <button onClick={OnRequestCancel} className={styles.cancelBtn}>
+              <button
+                onClick={() => {
+                  OnRequestCancel();
+                  setInterestText("");
+                }}
+                className={styles.cancelBtn}
+              >
                 Cancel
               </button>
             </div>
